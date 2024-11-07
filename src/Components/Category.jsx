@@ -5,14 +5,14 @@ import { useEffect } from 'react';
 import VideoCard from './VideoCard';
 
 
-const Category = ({setDeleteResponseFromCategory}) => {
+const Category = ({setDeleteResponseFromCategory,deleteResponseFromView}) => {
   const [categoryName,setCategoryName] = useState("")
   const [show, setShow] = useState(false);
   const [allCategory,setAllCategory] = useState()
 
   useEffect(()=>{
     showCategory()
-  },[])
+  },[deleteResponseFromView])
 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -79,6 +79,12 @@ const Category = ({setDeleteResponseFromCategory}) => {
     
   }
 
+  const categoryVideoDragStarted = (e,dragVideoDetails,category) => {
+    console.log("Inside categoryVideoDragStarted");
+    let dragData = {video:dragVideoDetails,category}
+    e.dataTransfer.setData("dragData",JSON.stringify(dragData))
+  }
+
   return (
     <>
      <div className='d-flex justify-content-around align-items-center'>
@@ -103,7 +109,7 @@ const Category = ({setDeleteResponseFromCategory}) => {
             {
               category?.allVideos?.length>0 && 
               category?.allVideos?.map(video=>(
-                <div key={video?.id} className="col-lg-4">
+                <div draggable={true} onDragStart={e=>categoryVideoDragStarted(e,video,category)} key={video?.id} className="col-lg-4">
                 {/* video card */}
                   <VideoCard insideCategory={true} displayData={video}/>
                 </div>
